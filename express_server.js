@@ -26,7 +26,8 @@ function generateRandomString(longURL) {
   object[text] = longURL;
   urlDatabase.push(object);
 
-  return urlDatabase;
+  return text;
+
 }
 
 app.get("/urls", (req,res) =>{
@@ -37,32 +38,37 @@ app.get("/urls", (req,res) =>{
 });
 
 // app.get("/urls/:id", (req,res) =>{
-app.get("/urls/b2xVn2", (req,res) =>{
+// app.get(`/urls/${shortURL}`, (req,res) =>{
 
- // let templateVar = {shortURL: req.params.id};
- // why does above format not work, but below does?
- res.render("urls_show", {shortURL: req.params.id});
- // console.log(req.params.id);
-
-});
-
-app.get("/u/:shortURL", (req, res) => {
-  // console.log(req.body);
-  // let resObj = res.json(urlDatabase.b2xVn2);
-  // console.log(typeof resObj);
-  // let longURL = ...
-  res.redirect(longURL);
-});
-
-
+//  // let templateVar = {shortURL: req.params.id};
+//  // why does above format not work, but below does?
+//  res.render("urls_show");
+//  // console.log(req.params.id);
+// // , {shortURL: req.params.id}
+// });
 app.get("/urls/new", (req, res) => {
   res.render("urls_new");
 });
 
+app.get("/urls/:id", (req, res) => {
+  // console.log(req.body);
+  res.render('urls_show');
+
+
+  // let resObj = res.json(urlDatabase.b2xVn2);
+  // console.log(typeof resObj);
+  // let longURL = ...
+  // res.redirect(longURL);
+});
+
+
+
+
 app.post("/urls", (req, res) => {
-  console.log(generateRandomString(req.body.longURL));
+  let shortURL = generateRandomString(req.body.longURL);
   // console.log(urlDatabase);                          // debug statement to see POST parameters
-  res.send("Ok");         // Respond with 'Ok' (we will replace this)
+  // res.send("Ok");
+  res.redirect(`http://localhost:8080/urls/${shortURL}`);         // Respond with 'Ok' (we will replace this)
 });
 
 

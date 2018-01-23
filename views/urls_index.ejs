@@ -9,7 +9,9 @@
    <!-- Add your EJS code here -->
    <ul>
      <% key.forEach(function(object){ %>
-       <li><%= object.url %></li>
+      <%   for(var tiny in object){ %>
+        <li> <%= tiny + " - " + object[tiny]; %> </li>
+      <% } %>
     <% }); %>
    </ul>
    <!-- and their shortened form -->
