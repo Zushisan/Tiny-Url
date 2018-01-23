@@ -1,0 +1,18 @@
+<!-- urls_index.ejs -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+ <title>TinyApp</title>
+</head>
+<body>
+   <!-- Add your EJS code here -->
+   <ul>
+     <% key.forEach(function(object){ %>
+       <li><%= object.url %></li>
+    <% }); %>
+   </ul>
+   <!-- and their shortened form -->
+   <p>my future link</p>
+   <!-- link for shortening a new URL -->
+</body>
+</html>
