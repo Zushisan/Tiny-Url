@@ -75,7 +75,18 @@ app.post("/urls", (req, res) => {
  res.redirect("http://localhost:8080/urls/");         // Respond with 'Ok' (we will replace this)
 });
 
+// Delete button
+app.post("/urls/:id/delete", (req, res) => {
+  let deleteKey = req.params.id;
 
+  for (let i = 0; i < urlDatabase.length; i++){
+      if (urlDatabase[i][deleteKey]){
+        delete urlDatabase[i][deleteKey];
+      }
+    }
+
+  res.redirect("http://localhost:8080/urls/");         // Respond with 'Ok' (we will replace this)
+});
 
 
 app.listen(8080);
