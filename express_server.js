@@ -7,69 +7,74 @@ const bodyParser = require("body-parser");
 app.use(bodyParser.urlencoded({extended: true}));
 app.set("view engine", "ejs");
 
- let urlDatabase = [
- //{ shortURL: longURL},
-   { "b2xVn2": "http://www.google.ca" },
-   { "9sm5xK": "http://www.lighthouse.ca" }
- ];
+var urlDatabase = [
+//{ shortURL: longURL},
+  { "b2xVn2": "http://www.google.ca" },
+  { "9sm5xK": "http://www.lighthouse.ca" }
+];
 
 
 function generateRandomString(longURL) {
-  var text = "";
-  var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+ var text = "";
+ var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 
-  for (var i = 0; i < 6; i++){
-    text += possible.charAt(Math.floor(Math.random() * possible.length));
-  }
+ for (var i = 0; i < 6; i++){
+   text += possible.charAt(Math.floor(Math.random() * possible.length));
+ }
 
-  var object = {};
-  object[text] = longURL;
-  urlDatabase.push(object);
+ var object = {};
+ object[text] = longURL;
+ urlDatabase.push(object);
 
-  return text;
+ return text;
 
 }
-
+//home
 app.get("/urls", (req,res) =>{
 
- res.render('urls_index', {
-   key: urlDatabase
- });
+res.render('urls_index', {
+  key: urlDatabase
+});
 });
 
-// app.get("/urls/:id", (req,res) =>{
-// app.get(`/urls/${shortURL}`, (req,res) =>{
-
-//  // let templateVar = {shortURL: req.params.id};
-//  // why does above format not work, but below does?
-//  res.render("urls_show");
-//  // console.log(req.params.id);
-// // , {shortURL: req.params.id}
-// });
+//form page
 app.get("/urls/new", (req, res) => {
-  res.render("urls_new");
+ res.render("urls_new");
 });
 
+//gives short url
 app.get("/urls/:id", (req, res) => {
-  // console.log(req.body);
-  res.render('urls_show');
+ let templateVar = {shortURL: req.params.id};
+ res.render('urls_show', templateVar);
 
 
-  // let resObj = res.json(urlDatabase.b2xVn2);
-  // console.log(typeof resObj);
-  // let longURL = ...
-  // res.redirect(longURL);
+});
+
+//is the short url that redirects to long url
+app.get("/u/:shortURL", (req, res) => {
+   let longURL = ""
+   let shortURL = req.params.shortURL
+   console.log("shortURL: ", shortURL)
+   for (let i = 0; i < urlDatabase.length; i++){
+      if (urlDatabase[i][shortURL]){
+        longURL = urlDatabase[i][shortURL];
+      }
+    }
+  res.redirect(longURL);
 });
 
 
 
 
+
+//form
 app.post("/urls", (req, res) => {
-  let shortURL = generateRandomString(req.body.longURL);
-  // console.log(urlDatabase);                          // debug statement to see POST parameters
-  // res.send("Ok");
-  res.redirect(`http://localhost:8080/urls/${shortURL}`);         // Respond with 'Ok' (we will replace this)
+ let shortURL = generateRandomString(req.body.longURL);
+ // console.log(urlDatabase);                          // debug statement to see POST parameters
+ // res.send("Ok");
+ res.redirect("http://localhost:8080/urls/");         // Respond with 'Ok' (we will replace this)
 });
+
 
 
 

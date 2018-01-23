@@ -2,13 +2,13 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <%- include ./partials/_header %>
- <title>TinyApp</title>
+ <%- include ./partials/_header %>
+<title>TinyApp</title>
 </head>
 <body>
-   <!-- Add your EJS code here -->
-   <ul>
-       <!-- <li> shortURL </li> -->
-   </ul>
+  <!-- Add your EJS code here -->
+  <ul>
+      <li><a href=" <%= "http://localhost:8080/u/" + shortURL %>" ><%- "http://localhost:8080/u/" + shortURL  %></li>
+  </ul>
 </body>
 </html>
