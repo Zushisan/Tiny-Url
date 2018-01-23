@@ -2,8 +2,15 @@
 const express = require("express");
 const app = express();
 const PORT = process.env.PORT || 8080;
+const bodyParser = require("body-parser");
 
+app.use(bodyParser.urlencoded({extended: true}));
 app.set("view engine", "ejs");
+
+function generateRandomString() {
+
+}
+
 
 app.get("/urls", (req,res) =>{
 
@@ -26,6 +33,17 @@ app.get("/urls/b2xVn2", (req,res) =>{
  // console.log(req.params.id);
 
 });
+
+app.get("/urls/new", (req, res) => {
+  res.render("urls_new");
+});
+
+app.post("/urls", (req, res) => {
+  console.log(req.body);  // debug statement to see POST parameters
+  res.send("Ok");         // Respond with 'Ok' (we will replace this)
+});
+
+
 
 app.listen(8080);
 console.log('8080 is the magic port');
