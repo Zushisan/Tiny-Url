@@ -7,17 +7,29 @@ const bodyParser = require("body-parser");
 app.use(bodyParser.urlencoded({extended: true}));
 app.set("view engine", "ejs");
 
-function generateRandomString() {
+ let urlDatabase = [
+ //{ shortURL: longURL},
+   { "b2xVn2": "http://www.google.ca" },
+   { "9sm5xK": "http://www.lighthouse.ca" }
+ ];
 
+
+function generateRandomString(longURL) {
+  var text = "";
+  var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+  for (var i = 0; i < 6; i++){
+    text += possible.charAt(Math.floor(Math.random() * possible.length));
+  }
+
+  var object = {};
+  object[text] = longURL;
+  urlDatabase.push(object);
+
+  return urlDatabase;
 }
 
-
 app.get("/urls", (req,res) =>{
-
- let urlDatabase = [
-   { url: "http://www.google.ca" },
-   { url: "http://www.lighthouse.ca" }
- ];
 
  res.render('urls_index', {
    key: urlDatabase
@@ -34,12 +46,22 @@ app.get("/urls/b2xVn2", (req,res) =>{
 
 });
 
+app.get("/u/:shortURL", (req, res) => {
+  // console.log(req.body);
+  // let resObj = res.json(urlDatabase.b2xVn2);
+  // console.log(typeof resObj);
+  // let longURL = ...
+  res.redirect(longURL);
+});
+
+
 app.get("/urls/new", (req, res) => {
   res.render("urls_new");
 });
 
 app.post("/urls", (req, res) => {
-  console.log(req.body);  // debug statement to see POST parameters
+  console.log(generateRandomString(req.body.longURL));
+  // console.log(urlDatabase);                          // debug statement to see POST parameters
   res.send("Ok");         // Respond with 'Ok' (we will replace this)
 });
 
