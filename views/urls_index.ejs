@@ -11,8 +11,15 @@
   <ul>
     <% key.forEach(function(object){ %>
      <%   for(var tiny in object){ %>
-       <li><a href=" <%= "http://localhost:8080/urls/" + tiny %>" > <%= tiny + " - " + object[tiny]; %></a><form method="POST" action="/urls/<%- tiny %>/delete" ><input type="submit" value="Delete"
-         name="Delete" id="delete" /></form></li>
+       <li>
+        <a href=" <%= "http://localhost:8080/urls/" + tiny %>" > <%= tiny + " - " + object[tiny]; %></a>
+
+        <a href <form method="POST" action="/urls/<%- tiny %>/delete" ><input type="submit" value="Delete"
+         name="Delete" id="delete" /></form></a>
+
+        <a href <form method="POST" action="/urls/<%- tiny %>/delete" ><input type="submit" value="Edit"
+         name="Edit" id="Edit" /></form></a>
+       </li>
      <% } %>
    <% }); %>
   </ul>

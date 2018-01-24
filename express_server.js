@@ -46,8 +46,6 @@ app.get("/urls/new", (req, res) => {
 app.get("/urls/:id", (req, res) => {
  let templateVar = {shortURL: req.params.id};
  res.render('urls_show', templateVar);
-
-
 });
 
 //is the short url that redirects to long url
@@ -60,19 +58,16 @@ app.get("/u/:shortURL", (req, res) => {
         longURL = urlDatabase[i][shortURL];
       }
     }
+    console.log("long URL: ", longURL)
   res.redirect(longURL);
 });
-
-
-
-
 
 //form
 app.post("/urls", (req, res) => {
  let shortURL = generateRandomString(req.body.longURL);
- // console.log(urlDatabase);                          // debug statement to see POST parameters
+ // console.log(urlDatabase);    // debug statement to see POST parameters
  // res.send("Ok");
- res.redirect("http://localhost:8080/urls/");         // Respond with 'Ok' (we will replace this)
+ res.redirect("http://localhost:8080/urls/"); // Respond with 'Ok' (we will replace this)
 });
 
 // Delete button
@@ -85,7 +80,20 @@ app.post("/urls/:id/delete", (req, res) => {
       }
     }
 
-  res.redirect("http://localhost:8080/urls/");         // Respond with 'Ok' (we will replace this)
+  res.redirect("http://localhost:8080/urls/"); // Respond with 'Ok' (we will replace this)
+});
+
+// Update button
+app.post("/urls/:id", (req, res) => {
+  let updateValue = req.body.longURL;
+  let updateKey = req.params.id;
+
+  for (let i = 0; i < urlDatabase.length; i++){
+      if (urlDatabase[i][updateKey]){
+        urlDatabase[i][updateKey] = updateValue;
+      }
+    }
+ res.redirect("http://localhost:8080/urls/"); // Respond with 'Ok' (we will replace this)
 });
 
 
