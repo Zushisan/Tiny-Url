@@ -2,9 +2,9 @@
 <header> Tiny URL </header>
 <a href="/urls" ><p style="display: inline-block; margin: 0"> Home </p></a>
 
-<% if (username) {%>
+<% if (userDatabaseKey[cookie]) {%>
 <div>
-  <p> Logged in as: <%= username %> </p>
+  <p> Logged in as: <%= userDatabaseKey[cookie].email %> </p>
   <div>
     <form action="/logout" method="POST" style="">
         <input type="submit" value="Logout" style="">
@@ -12,15 +12,9 @@
   </div>
 </div>
  <%} else {%>
-
 <div>
-  <form action="/login" method="POST" style="margin:20px;">
-     <label for="username">Enter a username:</label>
-     <input id="username" type="text" name="username" placeholder="username" style="width: 100px">
-     <input type="submit" value="Login">
-  </form>
-</div>
 
-  <% }%>
+</div>
+  <% } %>
 
 
