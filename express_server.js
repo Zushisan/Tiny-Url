@@ -150,7 +150,7 @@ app.post('/register', (req, res) => {
   console.log(userDatabase);
 })
 
-//form
+//form that generate url
 app.post("/urls", (req, res) => {
   let shortURL = generateRandomString(req.body.longURL);
   res.redirect("/urls");
@@ -186,18 +186,26 @@ app.post("/login", (req, res) => {
   let userEmail = req.body.email;
   let userPass = req.body.password;
 
-  for (let key in userDatabase){ // go throught each key in database
-    if(key.email === userEmail){ // check for email
-      if(key.password === userPass){ // check for password
-        res.cookie("userID", key); // if everything is good, set cookie
-      }
-    }
+  // console.log(userEmail);
+
+  for (let key in userDatabase){
+    // console.log("I am in the loop", userDatabase[key].email); // go throught each key in database
+    if(userDatabase[key].email === userEmail){
+      // console.log("I am in the email", key.email); // check for email
+      if(userDatabase[key].password === userPass){
+        // console.log("I am in the password", key.password); // check for password
+        res.cookie("userID", key);
+        res.redirect("/urls"); // if everything is good, set cookie
+      }                             // else wrong password
+    }                             // else register
   }
+
+
 
     // if no password re enter passwrod WRONG
 
   // else go register
-  res.redirect("/urls");
+  // res.redirect("/urls");
 });
 
 // Logout
