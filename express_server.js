@@ -11,28 +11,28 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.set("view engine", "ejs");
 
 var urlDatabase = [
-//{ shortURL: longURL},
- { "b2xVn2": "http://www.google.ca" },
- { "9sm5xK": "http://www.lighthouse.ca" }
+  //{ shortURL: longURL},
+  { "b2xVn2": "http://www.google.ca" },
+  { "9sm5xK": "http://www.lighthouse.ca" }
 ];
 
 
 //Random string generator
 function generateRandomString(longURL) {
-var text = "";
-var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  var text = "";
+  var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 
-for (var i = 0; i < 6; i++){
-  text += possible.charAt(Math.floor(Math.random() * possible.length));
+  for (var i = 0; i < 6; i++){
+    text += possible.charAt(Math.floor(Math.random() * possible.length));
+  }
+
+  var object = {};
+  object[text] = longURL;
+  urlDatabase.push(object);
+
+  return text;
 }
 
-
-var object = {};
-object[text] = longURL;
-urlDatabase.push(object);
-
-return text;
-}
 var baseURL = process.env.ROOT_URL || 'http://localhost:8080/';
 
 // redirect
@@ -108,7 +108,7 @@ app.post("/urls/:id", (req, res) => {
        urlDatabase[i][updateKey] = updateValue;
      }
    }
-res.redirect("/urls");
+  res.redirect("/urls");
 });
 
 // Login Form
