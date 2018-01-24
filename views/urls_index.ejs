@@ -6,24 +6,22 @@
 <title>TinyApp</title>
 </head>
 <body>
-<!-- Add your EJS code here -->
-<ul>
-  <% key.forEach(function(object){ %>
-   <%   for(var tiny in object){ %>
-     <li>
-      <a href=" <%= "http://localhost:8080/urls/" + tiny %>" > <%= tiny + " - " + object[tiny]; %></a>
-
-      <a href <form method="POST" action="/urls/<%- tiny %>/delete" ><input type="submit" value="Delete"
-       name="Delete" id="delete" /></form></a>
-
-     <a href=" <%= "http://localhost:8080/urls/" + tiny %>" ><input type="submit" value="Edit" name="Edit" id="Edit" /></form></a>
-     </li>
-   <% } %>
- <% }); %>
-</ul>
-<!-- and their shortened form -->
-<p>my future link</p>
-<!-- link for shortening a new URL -->
-<!-- <a href="link"></a> -->
+ <!-- Add your EJS code here -->
+ <ul>
+   <% key.forEach(function(object){ %>
+    <%   for(var tiny in object){ %>
+      <li>
+       <a href=" <%= "http://localhost:8080/urls/" + tiny %>" > <%= tiny + " - " + object[tiny]; %></a>
+       <a href=" <%= "http://localhost:8080/urls/" + tiny %>" > <%= tiny + " - " + object[tiny]; %></a><form method="POST" action="/urls/<%- tiny %>/delete" ><input type="submit" value="Delete"
+        name="Delete" id="delete" /></form>
+      <a href=" <%= "http://localhost:8080/urls/" + tiny %>" ><input type="submit" value="Edit" name="Edit" id="Edit" /></form></a>
+      </li>
+    <% } %>
+  <% }); %>
+ </ul>
+ <!-- and their shortened form -->
+ <p>my future link</p>
+ <!-- link for shortening a new URL -->
+ <!-- <a href="link"></a> -->
 </body>
 </html>

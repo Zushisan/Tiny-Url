@@ -12,17 +12,24 @@ app.set("view engine", "ejs");
 
 var urlDatabase = [
 //{ shortURL: longURL},
-{ "b2xVn2": "http://www.google.ca" },
-{ "9sm5xK": "http://www.lighthouse.ca" }
+ { "b2xVn2": "http://www.google.ca" },
+ { "9sm5xK": "http://www.lighthouse.ca" }
 ];
 
+// let templateVars = {
+//   username: req.cookies["username"],
+//   // ... any other vars
+// };
+// res.render("urls_index", templateVars);
 
+
+//Random string generator
 function generateRandomString(longURL) {
 var text = "";
 var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 
 for (var i = 0; i < 6; i++){
- text += possible.charAt(Math.floor(Math.random() * possible.length));
+  text += possible.charAt(Math.floor(Math.random() * possible.length));
 }
 
 var object = {};
@@ -30,40 +37,49 @@ object[text] = longURL;
 urlDatabase.push(object);
 
 return text;
-
 }
+
+//cookie username
+app.get('/', function(req, res) {
+ console.log("Cookies :  ", req.cookies);
+});
+
 //home
 app.get("/urls", (req,res) =>{
-
-res.render('urls_index', {
-key: urlDatabase
-});
+  res.render('urls_index', {
+   key: urlDatabase,
+   username: req.cookies["username"] || " "
+  });
 });
 
 //form page
 app.get("/urls/new", (req, res) => {
-res.render("urls_new");
+  res.render("urls_new", {username: req.cookies["username"] || " "});
 });
 
 //gives short url
 app.get("/urls/:id", (req, res) => {
-let templateVar = {shortURL: req.params.id};
-res.render('urls_show', templateVar);
+  let templateVar = {
+    shortURL: req.params.id,
+   username: req.cookies["username"] || " "
+ };
+  res.render('urls_show', templateVar);
 });
 
 //is the short url that redirects to long url
 app.get("/u/:shortURL", (req, res) => {
- let longURL = ""
- let shortURL = req.params.shortURL
- console.log("shortURL: ", shortURL)
- for (let i = 0; i < urlDatabase.length; i++){
-    if (urlDatabase[i][shortURL]){
-      longURL = urlDatabase[i][shortURL];
-    }
-  }
-  console.log("long URL: ", longURL)
-res.redirect(longURL);
+  let longURL = ""
+  let shortURL = req.params.shortURL
+  console.log("shortURL: ", shortURL)
+  for (let i = 0; i < urlDatabase.length; i++){
+     if (urlDatabase[i][shortURL]){
+       longURL = urlDatabase[i][shortURL];
+     }
+   }
+   console.log("long URL: ", longURL)
+ res.redirect(longURL);
 });
+
 
 //form
 app.post("/urls", (req, res) => {
@@ -75,36 +91,36 @@ res.redirect("/urls"); // Respond with 'Ok' (we will replace this)
 
 // Delete button
 app.post("/urls/:id/delete", (req, res) => {
-let deleteKey = req.params.id;
-
-for (let i = 0; i < urlDatabase.length; i++){
-    if (urlDatabase[i][deleteKey]){
-      delete urlDatabase[i][deleteKey];
-    }
-  }
-
-res.redirect("/urls"); // Respond with 'Ok' (we will replace this)
+ let deleteKey = req.params.id;
+ console.log(req.params.id)
+ for (let i = 0; i < urlDatabase.length; i++){
+     if (urlDatabase[i][deleteKey]){
+       delete urlDatabase[i][deleteKey];
+     }
+   }
+ res.redirect("/urls"); // Respond with 'Ok' (we will replace this)
 });
 
 // Update button
 app.post("/urls/:id", (req, res) => {
-let updateValue = req.body.longURL;
-let updateKey = req.params.id;
+ let updateValue = req.body.longURL;
+ let updateKey = req.params.id;
 
-for (let i = 0; i < urlDatabase.length; i++){
-    if (urlDatabase[i][updateKey]){
-      urlDatabase[i][updateKey] = updateValue;
-    }
-  }
+ for (let i = 0; i < urlDatabase.length; i++){
+     if (urlDatabase[i][updateKey]){
+       urlDatabase[i][updateKey] = updateValue;
+     }
+   }
 res.redirect("/urls"); // Respond with 'Ok' (we will replace this)
 });
 
+// Login Form
 app.post("/login", (req, res) => {
-let user = req.body.username
-console.log("user: ", user)
-res.cookie("username", user)
-console.log(req.cookies)
-res.redirect("/urls")
+  let user = req.body.username
+  // console.log("user: ", user)
+  res.cookie("username", user)
+  // console.log(req.cookies)
+  res.redirect("/urls")
 });
 
 
