@@ -12,8 +12,10 @@ app.set("view engine", "ejs");
 
 const urlDatabase = [
   //{ shortURL: longURL},
-  { "b2xVn2": "http://www.google.ca" },
-  { "9sm5xK": "http://www.lighthouse.ca" }
+  { "b2xVn2": "http://www.google.ca",
+      userID: "test" },
+  { "9sm5xK": "http://www.lighthouse.ca",
+      userID: "test" }
 ];
 
 const userDatabase = {
@@ -30,7 +32,7 @@ const userDatabase = {
 
 
 //Random url generator
-function generateRandomString(longURL) {
+function generateRandomString(longURL, cookie) {
   var text = "";
   var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 
@@ -38,9 +40,14 @@ function generateRandomString(longURL) {
     text += possible.charAt(Math.floor(Math.random() * possible.length));
   }
 
+  // push our tinyUrl longUrl pair into the object
   var object = {};
   object[text] = longURL;
+  // create a key userID, with the cookie value
+  object.userID = cookie;
+  console.log(object.userID);
   urlDatabase.push(object);
+  console.log(urlDatabase);
 
   return text;
 }
@@ -162,19 +169,22 @@ app.post('/register', (req, res) => {
 
 //form that generate url
 app.post("/urls", (req, res) => {
-  let shortURL = generateRandomString(req.body.longURL);
+  let cookie = req.cookies["userID"];
+  let shortURL = generateRandomString(req.body.longURL, cookie);
   res.redirect("/urls");
 });
 
 // Delete button
 app.post("/urls/:id/delete", (req, res) => {
  let deleteKey = req.params.id;
- // console.log(req.params.id)
+
  for (let i = 0; i < urlDatabase.length; i++){
-     if (urlDatabase[i][deleteKey]){
+    if (urlDatabase[i][deleteKey]){
+      if(req.cookies["userID"] === urlDatabase[i].userID){
        delete urlDatabase[i][deleteKey];
      }
-   }
+    }
+  }
  res.redirect("/urls");
 });
 
@@ -185,7 +195,9 @@ app.post("/urls/:id", (req, res) => {
 
  for (let i = 0; i < urlDatabase.length; i++){
      if (urlDatabase[i][updateKey]){
-       urlDatabase[i][updateKey] = updateValue;
+      if(req.cookies["userID"] === urlDatabase[i].userID){
+        urlDatabase[i][updateKey] = updateValue;
+      }
      }
    }
 res.redirect("/urls");
