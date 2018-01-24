@@ -16,12 +16,6 @@ var urlDatabase = [
  { "9sm5xK": "http://www.lighthouse.ca" }
 ];
 
-// let templateVars = {
-//   username: req.cookies["username"],
-//   // ... any other vars
-// };
-// res.render("urls_index", templateVars);
-
 
 //Random string generator
 function generateRandomString(longURL) {
@@ -39,29 +33,29 @@ urlDatabase.push(object);
 return text;
 }
 
-//cookie username
-app.get('/', function(req, res) {
- console.log("Cookies :  ", req.cookies);
+// redirect
+app.get("/", (req,res) =>{
+  res.redirect("/urls");
 });
 
 //home
 app.get("/urls", (req,res) =>{
   res.render('urls_index', {
    key: urlDatabase,
-   username: req.cookies["username"] || " "
+   username: req.cookies["username"]
   });
 });
 
 //form page
 app.get("/urls/new", (req, res) => {
-  res.render("urls_new", {username: req.cookies["username"] || " "});
+  res.render("urls_new", {username: req.cookies["username"]});
 });
 
 //gives short url
 app.get("/urls/:id", (req, res) => {
   let templateVar = {
     shortURL: req.params.id,
-   username: req.cookies["username"] || " "
+   username: req.cookies["username"]
  };
   res.render('urls_show', templateVar);
 });
@@ -86,7 +80,7 @@ app.post("/urls", (req, res) => {
 let shortURL = generateRandomString(req.body.longURL);
 
 // res.send("Ok");
-res.redirect("/urls"); // Respond with 'Ok' (we will replace this)
+res.redirect("/urls");
 });
 
 // Delete button
@@ -98,7 +92,7 @@ app.post("/urls/:id/delete", (req, res) => {
        delete urlDatabase[i][deleteKey];
      }
    }
- res.redirect("/urls"); // Respond with 'Ok' (we will replace this)
+ res.redirect("/urls");
 });
 
 // Update button
@@ -111,17 +105,24 @@ app.post("/urls/:id", (req, res) => {
        urlDatabase[i][updateKey] = updateValue;
      }
    }
-res.redirect("/urls"); // Respond with 'Ok' (we will replace this)
+res.redirect("/urls");
 });
 
 // Login Form
 app.post("/login", (req, res) => {
-  let user = req.body.username
-  // console.log("user: ", user)
-  res.cookie("username", user)
-  // console.log(req.cookies)
-  res.redirect("/urls")
+  let user = req.body.username;
+  res.cookie("username", user);
+  res.redirect("/urls");
 });
+
+// Logout
+app.post("/logout", (req, res) => {
+  console.log(req.body);
+  let user = req.body.username;
+  res.clearCookie("username", user);
+  res.redirect("/urls");
+});
+
 
 
 app.listen(8080);
