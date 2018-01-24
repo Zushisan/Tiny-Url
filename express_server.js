@@ -84,7 +84,15 @@ app.get("/urls/new", (req, res) => {
     userDatabaseKey: userDatabase,
     cookie: req.cookies["userID"]
   };
-  res.render("urls_new", templateVar);
+  let cookie = req.cookies["userID"]
+
+  for (let key in userDatabase){
+    if(userDatabase[cookie]){
+      res.render("urls_new", templateVar);
+      return
+    }
+  }
+  res.redirect("/login")
 });
 
 //gives short url
