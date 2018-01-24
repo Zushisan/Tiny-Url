@@ -1,23 +1,22 @@
 <!-- urls_shows.ejs -->
 <!DOCTYPE html>
 <html lang="en">
-<head>
- <%- include ./partials/_header %>
-<title>TinyApp</title>
-</head>
-<body>
+  <head>
+    <%- include ./partials/_header %>
+    <title>TinyApp</title>
+  </head>
+  <body>
   <!-- Add your EJS code here -->
-  <ul>
-      <li><a href=" <%= "http://localhost:8080/u/" + shortURL %>" ><%- "http://localhost:8080/u/" + shortURL  %></a></li>
-  </ul>
+    <ul>
+    <!-- Make the URL dynamic (no hard code) -->
+      <li><a href=" <%= "/u/" + shortURL %>" ><%- "http://localhost:8080/u/" + shortURL  %></a></li>
+    </ul>
 
-  <form action="/urls/<%- shortURL %>" method="POST" style="margin:150px;">
+    <form action="/urls/<%- shortURL %>" method="POST" style="margin:150px;">
       <label for="longURL">Enter a new URL:</label>
       <input id="longURL" type="text" name="longURL" placeholder="http://" style="width: 300px">
       <input type="submit" value="Update">
-  </form>
+    </form>
 
-</body>
+  </body>
 </html>
-
-
