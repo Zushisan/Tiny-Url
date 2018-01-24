@@ -102,13 +102,13 @@ app.get("/urls/:id", (req, res) => {
 app.get("/u/:shortURL", (req, res) => {
   let longURL = ""
   let shortURL = req.params.shortURL
-  console.log("shortURL: ", shortURL)
+  // console.log("shortURL: ", shortURL)
   for (let i = 0; i < urlDatabase.length; i++){
      if (urlDatabase[i][shortURL]){
        longURL = urlDatabase[i][shortURL];
      }
    }
-   console.log("long URL: ", longURL);
+   // console.log("long URL: ", longURL);
  res.redirect(longURL);
 });
 
@@ -132,22 +132,24 @@ app.get("/login", (req, res) => {
 
 // Registration Form
 app.post('/register', (req, res) => {
-  let randomID = generateRandomID(req.body);
-  // if (req.body.email === "" || req.body.password === ""){
-  //   res.status(400)
-  //   res.send("fefe");
-  // }
-  // for (let i = 0; i < urlDatabase; i++){
-  //   if (req.body.email === urlDatabse[i][email]){
-  //     res.status(400);
-  //     // .send("Email already in use")
-  //   }
-  // }
+  if (req.body.email === "" || req.body.password === ""){
+    res.status(400).send("Please enter valid email/password");
+    return
+  }
 
-  // else
+  for (let key in userDatabase){
+    console.log("compare: ", req.body.email, " to ", userDatabase[key].email)
+    if (req.body.email === userDatabase[key].email){
+      res.status(400).send("Email already in use")
+      return
+    }
+  }
+
+  let randomID = generateRandomID(req.body);
   res.cookie("userID", randomID);
   res.redirect('/urls');
-  console.log(userDatabase);
+  // console.log(userDatabase);
+// }
 })
 
 //form that generate url
@@ -159,7 +161,7 @@ app.post("/urls", (req, res) => {
 // Delete button
 app.post("/urls/:id/delete", (req, res) => {
  let deleteKey = req.params.id;
- console.log(req.params.id)
+ // console.log(req.params.id)
  for (let i = 0; i < urlDatabase.length; i++){
      if (urlDatabase[i][deleteKey]){
        delete urlDatabase[i][deleteKey];
@@ -186,31 +188,20 @@ app.post("/login", (req, res) => {
   let userEmail = req.body.email;
   let userPass = req.body.password;
 
-  // console.log(userEmail);
-
   for (let key in userDatabase){
-    // console.log("I am in the loop", userDatabase[key].email); // go throught each key in database
-    if(userDatabase[key].email === userEmail){
-      // console.log("I am in the email", key.email); // check for email
-      if(userDatabase[key].password === userPass){
-        // console.log("I am in the password", key.password); // check for password
-        res.cookie("userID", key);
-        res.redirect("/urls"); // if everything is good, set cookie
-      }                             // else wrong password
-    }                             // else register
+    if(userDatabase[key].email === userEmail && userDatabase[key].password === userPass){
+      res.cookie("userID", key);
+      res.redirect("/urls")
+      return
+    }
   }
-
-
-
-    // if no password re enter passwrod WRONG
-
-  // else go register
-  // res.redirect("/urls");
+  res.status(403).send("Incorrect credentials")
+  return
 });
 
 // Logout
 app.post("/logout", (req, res) => {
-  console.log(req.cookies);
+  // console.log(req.cookies);
   let user = req.cookies;
   res.clearCookie("userID", user.userID);
   res.redirect("/urls");
