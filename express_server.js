@@ -30,6 +30,23 @@ const userDatabase = {
     password: "1234"}
 };
 
+function filterDatabase(database, cookie){
+  let newObject = [];
+  // console.log("I am the database: ", database);
+  // console.log("I am the cookie: ", cookie);
+  if(cookie !== undefined){
+    // console.log("I am in the if");
+    for(let index in database){
+      // console.log("I am database[index]: ", database[index]);
+      if(database[index].userID === cookie){
+        newObject.push(database[index]);
+      }
+    }
+    // return newObject;
+  }
+  return newObject;
+  // return database;
+}
 
 //Random url generator
 function generateRandomString(longURL, cookie) {
@@ -45,9 +62,9 @@ function generateRandomString(longURL, cookie) {
   object[text] = longURL;
   // create a key userID, with the cookie value
   object.userID = cookie;
-  console.log(object.userID);
+  // console.log(object.userID);
   urlDatabase.push(object);
-  console.log(urlDatabase);
+  // console.log(urlDatabase);
 
   return text;
 }
@@ -77,11 +94,16 @@ app.get("/", (req,res) =>{
 
 //home
 app.get("/urls", (req,res) =>{
+
+  let cookie = req.cookies["userID"]
+  let newDatabase = filterDatabase(urlDatabase, cookie);
+
   let templateVar = {
-    key: urlDatabase,
+    key: newDatabase,
     userDatabaseKey: userDatabase,
     cookie: req.cookies["userID"]
   };
+
   res.render('urls_index', templateVar);
 });
 
@@ -109,8 +131,21 @@ app.get("/urls/:id", (req, res) => {
     baseURL: baseURL,
     userDatabaseKey: userDatabase,
     cookie: req.cookies["userID"]
- };
-  res.render('urls_show', templateVar);
+  };
+
+  console.log(req.params.id);
+  console.log(urlDatabase)
+
+  for(let key in urlDatabase){
+    // console.log("I compare req.params.id: ",req.params.id, " to: ", urlDatabase[key][req.params.id]);
+    if(urlDatabase[key][req.params.id]){
+      if(req.cookies["userID"] === urlDatabase[key].userID){
+        res.render('urls_show', templateVar);
+        return;
+      }
+    }
+  }
+  res.status(400).send("Not found");
 });
 
 //is the short url that redirects to long url
