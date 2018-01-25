@@ -12,11 +12,32 @@
       <li><a href=" <%= "/u/" + shortURL %>" ><%- baseURL + "u/" + shortURL  %></a></li>
     </ul>
 
-    <form action="/urls/<%- shortURL %>" method="POST" style="margin:150px;">
+    <form action="/urls/<%- shortURL %>?_method=PUT" method="POST" style="margin:150px;">
       <label for="longURL">Enter a new URL:</label>
       <input id="longURL" type="text" name="longURL" placeholder="http://" style="width: 300px">
       <input type="submit" value="Update">
     </form>
+
+<!-- display view data -->
+<% for(let index in urlDatabase){ %>
+<%  if(urlDatabase[index][shortURL]){ %>
+      <p> Total views: </p> <%= urlDatabase[index].visits.length;   %>
+      <p> Unique views: </p> <%= urlDatabase[index].uniqueIDs.length;   %>
+
+      <p> History: </p>
+      <ul>
+
+        <% for(let obj in urlDatabase[index].visits){ %>
+          <li>
+            <p> Time: </p><%= urlDatabase[index].visits[obj].timestamp  %>
+            <p> User: </p><%= urlDatabase[index].visits[obj].userEmail  %>
+          </li>
+        <% } %>
+
+      </ul>
+  <% } %>
+<% } %>
+
 
   </body>
 </html>

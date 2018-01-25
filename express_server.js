@@ -1,16 +1,17 @@
- // express_server.js
+// express_server.js
 const express = require("express");
 const app = express();
 const PORT = process.env.PORT || 8080;
 const bodyParser = require("body-parser");
 const bcrypt = require('bcrypt');
-var cookieSession = require('cookie-session');
+const cookieSession = require('cookie-session');
+const methodOverride = require('method-override');
 
 app.use(cookieSession({
   name: 'session',
   secret: "key1",
 }))
-
+app.use(methodOverride('_method'))
 app.use(bodyParser.urlencoded({extended: true}));
 app.set("view engine", "ejs");
 
@@ -21,12 +22,22 @@ var urlDatabase = [
   //{ shortURL: longURL,
   //    userID: "who created the url" }
   { "b2xVn2": "http://www.google.ca",
-      userID: "test" },
+      userID: "test",
+      uniqueIDs: [], // unique user, if in the array
+      visits: []
+  }, // visit with time stamps (all of th)
+
+
+
   { "9sm5xK": "http://www.lighthouse.ca",
-      userID: "test" }
+      userID: "test",
+      uniqueIDs: [],
+      visits: []
+  }
+
 ];
 
-const userDatabase = {
+var userDatabase = {
   "Jonathan": {
     userID: "Jonathan",
     email: "Jonathan@me.com",
@@ -66,8 +77,12 @@ function generateRandomString(longURL, cookie) {
   object[randomShortUrl] = longURL;
   // create a key userID, with the cookie value
   object.userID = cookie;
+  object.uniqueIDs = []; // unique user
+  object.visits = []; // total visits with time and id
+
   urlDatabase.push(object);
 
+  console.log(urlDatabase);
 
   return randomShortUrl;
 }
@@ -129,17 +144,23 @@ app.get("/urls/:id", (req, res) => {
     shortURL: req.params.id,
     baseURL: baseURL,
     userDatabaseKey: userDatabase,
-    cookie: req.session.user_id
+    cookie: req.session.user_id,
+    urlDatabase: urlDatabase
   };
 
   for(let key in urlDatabase){
     if(urlDatabase[key][req.params.id]){
       if(req.session.user_id === urlDatabase[key].userID){
+
+
+
         res.render('urls_show', templateVar);
         return;
       }
     }
   }
+
+
   // if nothing is rendered, 400 not found
   res.status(400).send("Not found");
 });
@@ -149,10 +170,33 @@ app.get("/u/:shortURL", (req, res) => {
   let longURL = ""
   let shortURL = req.params.shortURL
 
+  // Set the long URL value
   let object = urlDatabase.find(function(u){
     return u[shortURL];
   });
   longURL = object[shortURL];
+
+  // Set unique IDs counter
+  let currentID = req.session.user_id || "Unregistered user";
+  let boolean = object.uniqueIDs.find(function(u){
+    return (u === currentID);
+  });
+  if(!boolean){
+    object.uniqueIDs.push(currentID);
+  }
+
+  let currentEmail = userDatabase[currentID].email || "Unregistered user";
+
+  // Set every visits counter
+  let timestamp = Date().toString().split(' ').slice(0, 5).join(' ');
+  let visitObject = {};
+
+  visitObject.timestamp = timestamp;
+  visitObject.userEmail = currentEmail;
+
+  object.visits.push(visitObject);
+  console.log(visitObject);
+  console.log(object.visits);
 
   res.redirect(longURL);
 });
@@ -206,7 +250,7 @@ app.post("/urls", (req, res) => {
 });
 
 // Delete button
-app.post("/urls/:id/delete", (req, res) => {
+app.delete("/urls/:id", (req, res) => {
   let deleteKey = req.params.id;
 
   for (let i = 0; i < urlDatabase.length; i++){
@@ -221,7 +265,7 @@ app.post("/urls/:id/delete", (req, res) => {
 });
 
 // Update button
-app.post("/urls/:id", (req, res) => {
+app.put("/urls/:id", (req, res) => {
   let updateValue = req.body.longURL;
   let updateKey = req.params.id;
 

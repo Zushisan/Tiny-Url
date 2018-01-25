@@ -6,19 +6,15 @@
     <% include partials/_header %>
   </head>
   <body>
-
-    <!-- use find() ? -->
     <ul>
       <% key.forEach(function(object){ %>
         <% for(var tiny in object){ %>
       <li>
-
         <a href=" <%= "/urls/" + tiny %>" > <%= tiny + " - " + object[tiny]; %></a>
-        <form method="POST" action="/urls/<%- tiny %>/delete">
+        <form method="POST" action="/urls/<%- tiny %>?_method=DELETE">
           <input type="submit" value="Delete" name="Delete" id="delete">
         </form>
         <a href=" <%= "/urls/" + tiny %>" ><input type="submit" value="Edit" name="Edit" id="Edit"></a>
-
       </li>
         <% break } %>
       <% }); %>
