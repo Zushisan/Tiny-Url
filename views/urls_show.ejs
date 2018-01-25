@@ -13,8 +13,8 @@
     </ul>
 
     <form action="/urls/<%- shortURL %>?_method=PUT" method="POST" style="margin:150px;">
-      <label for="longURL">Enter a new URL:</label>
-      <input id="longURL" type="text" name="longURL" placeholder="http://" style="width: 300px">
+      <label for="longURL"></label>
+      <input id="longURL" type="text" name="longURL" placeholder="http://" style="width: 300px" value="<%= longURL %>">
       <input type="submit" value="Update">
     </form>
 
@@ -23,17 +23,13 @@
 <%  if(urlDatabase[index][shortURL]){ %>
       <p> Total views: </p> <%= urlDatabase[index].visits.length;   %>
       <p> Unique views: </p> <%= urlDatabase[index].uniqueIDs.length;   %>
-
       <p> History: </p>
       <ul>
-
         <% for(let obj in urlDatabase[index].visits){ %>
           <li>
-            <p> Time: </p><%= urlDatabase[index].visits[obj].timestamp  %>
-            <p> User: </p><%= urlDatabase[index].visits[obj].userEmail  %>
+            <p> Time: <%= urlDatabase[index].visits[obj].timestamp  %> User: <%= urlDatabase[index].visits[obj].userEmail %></p>
           </li>
         <% } %>
-
       </ul>
   <% } %>
 <% } %>

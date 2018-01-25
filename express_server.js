@@ -133,15 +133,25 @@ app.get("/urls/new", (req, res) => {
    if(userDatabase[cookie]){
      res.render("urls_new", templateVar);
      return
-   }
- }
+    }
+  }
  res.redirect("/login")
 });
 
 //gives short url
 app.get("/urls/:id", (req, res) => {
+  let longURL = ""
+  let shortURL = req.params.id
+
+  for (let x in urlDatabase){
+    if (urlDatabase[x][shortURL]){
+      longURL = urlDatabase[x][shortURL]
+    }
+  }
+
   let templateVar = {
-    shortURL: req.params.id,
+    shortURL: shortURL,
+    longURL: longURL,
     baseURL: baseURL,
     userDatabaseKey: userDatabase,
     cookie: req.session.user_id,
@@ -151,7 +161,6 @@ app.get("/urls/:id", (req, res) => {
   for(let key in urlDatabase){
     if(urlDatabase[key][req.params.id]){
       if(req.session.user_id === urlDatabase[key].userID){
-
 
 
         res.render('urls_show', templateVar);
@@ -185,7 +194,7 @@ app.get("/u/:shortURL", (req, res) => {
     object.uniqueIDs.push(currentID);
   }
 
-  let currentEmail = userDatabase[currentID].email || "Unregistered user";
+  let currentEmail = (userDatabase[currentID] && userDatabase[currentID].email) || "Unregistered user";
 
   // Set every visits counter
   let timestamp = Date().toString().split(' ').slice(0, 5).join(' ');
@@ -246,7 +255,7 @@ app.post("/urls", (req, res) => {
   let cookie = req.session.user_id;
   let shortURL = generateRandomString(req.body.longURL, cookie);
 
-  res.redirect("/urls");
+  res.redirect("/urls/" + shortURL);
 });
 
 // Delete button
@@ -289,7 +298,6 @@ app.post("/login", (req, res) => {
   for (let key in userDatabase){
     if(userDatabase[key].email === userEmail && bcrypt.compareSync(userPass, userDatabase[key].password)){
       req.session.user_id = key;
-      console.log(req.session.user_id);
       res.redirect("/urls");
       return
     }
