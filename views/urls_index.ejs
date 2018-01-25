@@ -10,11 +10,13 @@
       <% key.forEach(function(object){ %>
         <% for(var tiny in object){ %>
       <li>
-        <a href=" <%= "/urls/" + tiny %>" > <%= tiny + " - " + object[tiny]; %></a>
+        <p><a href=" <%= "/urls/" + tiny %>" > <%= tiny + " - " + object[tiny]; %></a>
+            Created: <%= object.dateCreated %>, Total views: <%= object.visits.length %> , Unique Views: <%= object.uniqueIDs.length %>.
+
         <form method="POST" action="/urls/<%- tiny %>?_method=DELETE">
           <input type="submit" value="Delete" name="Delete" id="delete">
         </form>
-        <a href=" <%= "/urls/" + tiny %>" ><input type="submit" value="Edit" name="Edit" id="Edit"></a>
+        <a href=" <%= "/urls/" + tiny %>" ><input type="submit" value="Edit" name="Edit" id="Edit"></a></p>
       </li>
         <% break } %>
       <% }); %>

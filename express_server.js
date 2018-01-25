@@ -24,15 +24,15 @@ var urlDatabase = [
   { "b2xVn2": "http://www.google.ca",
       userID: "test",
       uniqueIDs: [], // unique user, if in the array
-      visits: []
+      visits: [],
+      dateCreated: "I am the date"
   }, // visit with time stamps (all of th)
-
-
 
   { "9sm5xK": "http://www.lighthouse.ca",
       userID: "test",
       uniqueIDs: [],
-      visits: []
+      visits: [],
+      dateCreated: "I am the date"
   }
 
 ];
@@ -78,7 +78,8 @@ function generateRandomString(longURL, cookie) {
   // create a key userID, with the cookie value
   object.userID = cookie;
   object.uniqueIDs = []; // unique user
-  object.visits = []; // total visits with time and id
+  object.visits = [];
+  object.dateCreated = Date().toString().split(' ').slice(0, 5).join(' ');
 
   urlDatabase.push(object);
 
@@ -183,6 +184,12 @@ app.get("/u/:shortURL", (req, res) => {
   let object = urlDatabase.find(function(u){
     return u[shortURL];
   });
+
+  if(!object){
+    res.status(400).send("Short URL does not exist.");
+    return;
+  }
+
   longURL = object[shortURL];
 
   // Set unique IDs counter
@@ -204,8 +211,6 @@ app.get("/u/:shortURL", (req, res) => {
   visitObject.userEmail = currentEmail;
 
   object.visits.push(visitObject);
-  console.log(visitObject);
-  console.log(object.visits);
 
   res.redirect(longURL);
 });
