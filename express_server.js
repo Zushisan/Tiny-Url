@@ -17,27 +17,6 @@ app.set("view engine", "ejs");
 // Waiting for dynamic URL
 var baseURL = process.env.ROOT_URL || 'http://localhost:8080/';
 
-function checkUser(req, res, next) {
-  // We want to leave /login and /signup available even if the user
-  // isn't logged in, for obvious reasons.
-  if (req.path.match(/login|register/)) {
-    next(); // Execute next middleware or go to routes
-    return;
-  }
-  // Get user from cookies
-  const currentUser = req.session.user_id
-  if (currentUser) {
-    // We can add values to req and res in a middleware function
-    req.currentUser = currentUser;
-    next(); // Always call next to proceed
-  }
-  else {
-    res.redirect('/login');
-  }
-}
-
-app.use(checkUser);
-
 var urlDatabase = [
   //{ shortURL: longURL,
   //    userID: "who created the url" }
@@ -135,7 +114,13 @@ app.get("/urls/new", (req, res) => {
   };
   let cookie = req.session.user_id;
 
-  res.render("urls_new", templateVar);
+  for (let key in userDatabase){
+   if(userDatabase[cookie]){
+     res.render("urls_new", templateVar);
+     return
+   }
+ }
+ res.redirect("/login")
 });
 
 //gives short url
