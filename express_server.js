@@ -4,6 +4,7 @@ const app = express();
 const PORT = process.env.PORT || 8080;
 const bodyParser = require("body-parser");
 const cookieParser = require('cookie-parser')
+const bcrypt = require('bcrypt');
 
 
 app.use(cookieParser());
@@ -71,13 +72,16 @@ function generateRandomString(longURL, cookie) {
 
 //Random user ID generator
 function generateRandomID(userInfo) {
+  console.log("password before: ", userInfo.password)
+  userInfo.password = bcrypt.hashSync(userInfo.password, 10)
+  console.log("password after: ", userInfo.password)
   var randomID = "";
   var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 
   for (var i = 0; i < 4; i++){
     randomID += possible.charAt(Math.floor(Math.random() * possible.length));
   }
-
+  console.log("userInfo: ", userInfo)
   var object = userInfo;
   object.userID = randomID;
   userDatabase[randomID] = object;
@@ -244,7 +248,7 @@ app.post("/login", (req, res) => {
   let userPass = req.body.password;
 
   for (let key in userDatabase){
-    if(userDatabase[key].email === userEmail && userDatabase[key].password === userPass){
+    if(userDatabase[key].email === userEmail && bcrypt.compareSync(userPass, userDatabase[key].password)){
       res.cookie("userID", key);
       res.redirect("/urls")
       return
