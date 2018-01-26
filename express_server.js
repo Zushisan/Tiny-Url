@@ -48,6 +48,16 @@ var userDatabase = {
   }
 };
 
+// Small check to have a "valid" URL
+function checkLongURL(longURL){
+  var valid = /^(ftp|http|https):\/\/[^ "]+$/.test(longURL);
+  if (valid){
+    return longURL;
+  }
+  longURL = "http://" + longURL;
+  return longURL;
+};
+
 // return a filtered database in function of the logged user
 function filterDatabase(database, cookie){
   let newObject = [];
@@ -71,7 +81,7 @@ function generateRandomString(longURL, cookie) {
   }
 
   var object = {};
-  object[randomShortUrl] = longURL;
+  object[randomShortUrl] = checkLongURL(longURL);
 
   // Create our keys
   object.userID = cookie;
@@ -270,7 +280,7 @@ app.delete("/urls/:id", (req, res) => {
 
 // Update button
 app.put("/urls/:id", (req, res) => {
-  let updateValue = req.body.longURL;
+  let updateValue = checkLongURL(req.body.longURL);
   let updateKey = req.params.id;
 
   for (let i = 0; i < urlDatabase.length; i++){
