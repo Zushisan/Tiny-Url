@@ -1,4 +1,5 @@
 // express_server.js
+
 const express = require("express");
 const app = express();
 const PORT = process.env.PORT || 8080;
@@ -10,8 +11,8 @@ const methodOverride = require('method-override');
 app.use(cookieSession({
   name: 'session',
   secret: "key1",
-}))
-app.use(methodOverride('_method'))
+}));
+app.use(methodOverride('_method'));
 app.use(bodyParser.urlencoded({extended: true}));
 app.set("view engine", "ejs");
 
@@ -19,22 +20,19 @@ app.set("view engine", "ejs");
 var baseURL = process.env.ROOT_URL || 'http://localhost:8080/';
 
 var urlDatabase = [
-  //{ shortURL: longURL,
-  //    userID: "who created the url" }
   { "b2xVn2": "http://www.google.ca",
       userID: "test",
-      uniqueIDs: [], // unique user, if in the array
+      uniqueIDs: [],
       visits: [],
-      dateCreated: "I am the date"
-  }, // visit with time stamps (all of th)
+      dateCreated: "Example Date"
+  },
 
   { "9sm5xK": "http://www.lighthouse.ca",
       userID: "test",
       uniqueIDs: [],
       visits: [],
-      dateCreated: "I am the date"
+      dateCreated: "Example Date"
   }
-
 ];
 
 var userDatabase = {
@@ -72,25 +70,23 @@ function generateRandomString(longURL, cookie) {
     randomShortUrl += possible.charAt(Math.floor(Math.random() * possible.length));
   }
 
-  // push our tinyUrl longUrl pair into the object
   var object = {};
   object[randomShortUrl] = longURL;
-  // create a key userID, with the cookie value
+
+  // Create our keys
   object.userID = cookie;
-  object.uniqueIDs = []; // unique user
+  object.uniqueIDs = [];
   object.visits = [];
   object.dateCreated = Date().toString().split(' ').slice(0, 5).join(' ');
 
   urlDatabase.push(object);
-
-  console.log(urlDatabase);
 
   return randomShortUrl;
 }
 
 //Random user ID generator
 function generateRandomID(userInfo) {
-  userInfo.password = bcrypt.hashSync(userInfo.password, 10)
+  userInfo.password = bcrypt.hashSync(userInfo.password, 10);
   var randomID = "";
   var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 
@@ -110,9 +106,9 @@ app.get("/", (req,res) =>{
   res.redirect("/urls");
 });
 
-// home
+// home with list of urls
 app.get("/urls", (req,res) =>{
-  let cookie = req.session.user_id
+  let cookie = req.session.user_id;
   let newDatabase = filterDatabase(urlDatabase, cookie);
   let templateVar = {
     key: newDatabase,
@@ -133,16 +129,16 @@ app.get("/urls/new", (req, res) => {
   for (let key in userDatabase){
    if(userDatabase[cookie]){
      res.render("urls_new", templateVar);
-     return
+     return;
     }
   }
- res.redirect("/login")
+ res.redirect("/login");
 });
 
-//gives short url
+//Short url status/edit page
 app.get("/urls/:id", (req, res) => {
-  let longURL = ""
-  let shortURL = req.params.id
+  let longURL = "";
+  let shortURL = req.params.id;
 
   for (let x in urlDatabase){
     if (urlDatabase[x][shortURL]){
@@ -159,26 +155,22 @@ app.get("/urls/:id", (req, res) => {
     urlDatabase: urlDatabase
   };
 
+  // Find the user who created the shortURL or return 400 status code
   for(let key in urlDatabase){
     if(urlDatabase[key][req.params.id]){
       if(req.session.user_id === urlDatabase[key].userID){
-
-
         res.render('urls_show', templateVar);
         return;
       }
     }
   }
-
-
-  // if nothing is rendered, 400 not found
   res.status(400).send("Not found");
 });
 
-// the short url link that redirects to long url
+// the short url link that redirects to the long url
 app.get("/u/:shortURL", (req, res) => {
   let longURL = ""
-  let shortURL = req.params.shortURL
+  let shortURL = req.params.shortURL;
 
   // Set the long URL value
   let object = urlDatabase.find(function(u){
@@ -203,10 +195,11 @@ app.get("/u/:shortURL", (req, res) => {
 
   let currentEmail = (userDatabase[currentID] && userDatabase[currentID].email) || "Unregistered user";
 
-  // Set every visits counter
+  // Set current date
   let timestamp = Date().toString().split(' ').slice(0, 5).join(' ');
   let visitObject = {};
 
+  // Set every visits counter
   visitObject.timestamp = timestamp;
   visitObject.userEmail = currentEmail;
 
@@ -221,7 +214,6 @@ app.get("/register", (req, res) => {
     userDatabaseKey: userDatabase,
     cookie: req.session.user_id
   };
-
   res.render("register", templateVar);
 });
 
@@ -231,7 +223,6 @@ app.get("/login", (req, res) => {
     userDatabaseKey: userDatabase,
     cookie: req.session.user_id
   };
-
   res.render("login", templateVar);
 });
 
@@ -239,7 +230,7 @@ app.get("/login", (req, res) => {
 app.post('/register', (req, res) => {
   if (req.body.email === "" || req.body.password === ""){
     res.status(400).send("Please enter valid email/password");
-    return
+    return;
   }
 
   for (let key in userDatabase){
@@ -255,7 +246,7 @@ app.post('/register', (req, res) => {
   res.redirect('/urls');
 })
 
-// form that generate url
+// form that create shortURL from a longURL
 app.post("/urls", (req, res) => {
   let cookie = req.session.user_id;
   let shortURL = generateRandomString(req.body.longURL, cookie);
@@ -274,7 +265,6 @@ app.delete("/urls/:id", (req, res) => {
       }
     }
   }
-
  res.redirect("/urls");
 });
 
@@ -283,7 +273,6 @@ app.put("/urls/:id", (req, res) => {
   let updateValue = req.body.longURL;
   let updateKey = req.params.id;
 
-
   for (let i = 0; i < urlDatabase.length; i++){
     if (urlDatabase[i][updateKey]){
       if(req.session.user_id === urlDatabase[i].userID){
@@ -291,7 +280,6 @@ app.put("/urls/:id", (req, res) => {
       }
      }
    }
-
 res.redirect("/urls");
 });
 
@@ -304,12 +292,12 @@ app.post("/login", (req, res) => {
     if(userDatabase[key].email === userEmail && bcrypt.compareSync(userPass, userDatabase[key].password)){
       req.session.user_id = key;
       res.redirect("/urls");
-      return
+      return;
     }
   }
 
-  res.status(403).send("Incorrect credentials")
-  return
+  res.status(403).send("Incorrect credentials");
+  return;
 });
 
 // Logout
@@ -317,7 +305,6 @@ app.post("/logout", (req, res) => {
   req.session = null;
   res.redirect("/urls");
 });
-
 
 app.listen(8080);
 console.log('8080 is the magic port');

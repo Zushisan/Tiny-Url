@@ -3,10 +3,12 @@
 <html lang="en">
   <head>
     <title>TinyApp</title>
-    <% include partials/_header %>
   </head>
+
   <body>
+    <% include partials/_header %>
     <ul>
+      <!-- Display the list of urls -->
       <% key.forEach(function(object){ %>
         <% for(var tiny in object){ %>
       <li>
